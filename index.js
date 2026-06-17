@@ -28,6 +28,25 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+app.post('/api/register', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ error: 'Data tidak lengkap' });
+
+  const checkSql = 'SELECT * FROM users WHERE username = ?';
+  connection.query(checkSql, [username], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    if (results.length > 0) return res.status(400).json({ error: 'Username sudah digunakan' });
+
+    const insertSql = 'INSERT INTO users (username, password, token) VALUES (?, ?, ?)';
+    const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    
+    connection.query(insertSql, [username, password, token], (err, results) => {
+      if (err) return res.status(500).json({ error: 'Gagal membuat akun', detail: err.message });
+      res.status(201).json({ message: 'Akun berhasil dibuat', token });
+    });
+  });
+});
+
 // --- ROUTES UNTUK BARANG (CRUD) ---
 
 // 1. GET Semua Barang
