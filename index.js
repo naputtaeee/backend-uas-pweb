@@ -106,7 +106,4 @@ app.delete('/api/barang/:id', (req, res) => {
 });
 
 // --- JALANKAN SERVER ---
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server Backend berjalan di http://localhost:${PORT}`);
-});
+module.exports = app;
